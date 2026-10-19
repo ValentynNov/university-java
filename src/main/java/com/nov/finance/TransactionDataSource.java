@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/** Supplies characters independently of the CSV parser. */
 @FunctionalInterface
 public interface TransactionDataSource {
     Reader open() throws IOException;

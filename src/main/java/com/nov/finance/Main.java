@@ -20,16 +20,22 @@ public final class Main {
         List<Transaction> transactions = TransactionCSVReader.readTransactions(source);
 
         TransactionReportGenerator.printTransactions(transactions, System.out);
+
         TransactionReportGenerator.printBalanceReport(
                 TransactionAnalyzer.calculateTotalBalance(transactions), System.out);
+
         TransactionReportGenerator.printTransactionsCountByMonth(monthYear,
                 TransactionAnalyzer.countTransactionsByMonth(transactions, monthYear), System.out);
+
         TransactionReportGenerator.printTopExpensesReport(
                 TransactionAnalyzer.findTopExpenses(transactions), System.out);
+
         TransactionReportGenerator.printExpenseExtremesReport(
                 TransactionAnalyzer.findExpenseExtremes(transactions, from, to), System.out);
+
         TransactionReportGenerator.printCategoryExpenses(
                 TransactionAnalyzer.expensesByCategory(transactions), 1000, System.out);
+
         TransactionReportGenerator.printMonthlyExpenses(
                 TransactionAnalyzer.expensesByMonth(transactions), 1000, System.out);
     }

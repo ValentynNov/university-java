@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-/** Stateless console reports. */
 public abstract class TransactionReportGenerator {
     private TransactionReportGenerator() {
     }

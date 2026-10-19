@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-/** Stateless operations on a supplied transaction list. */
 public abstract class TransactionAnalyzer {
     private static final DateTimeFormatter CSV_DATE = DateTimeFormatter.ofPattern("dd-MM-uuuu");
     private static final DateTimeFormatter MONTH = DateTimeFormatter.ofPattern("MM-uuuu");

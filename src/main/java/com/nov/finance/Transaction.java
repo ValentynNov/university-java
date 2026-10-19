@@ -3,7 +3,6 @@ package com.nov.finance;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 
-/** One CSV transaction. A three-column record uses its description as its category. */
 @Value
 @AllArgsConstructor
 public class Transaction {

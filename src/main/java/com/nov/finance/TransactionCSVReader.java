@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** Stateless CSV parsing; no reader object needs to be instantiated. */
 public abstract class TransactionCSVReader {
     private TransactionCSVReader() {
     }
