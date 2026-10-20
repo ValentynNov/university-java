@@ -14,7 +14,7 @@ public abstract class TransactionCSVReader {
     public static List<Transaction> readTransactions(Reader reader) throws IOException {
         Objects.requireNonNull(reader, "reader");
         List<Transaction> transactions = new ArrayList<>();
-        BufferedReader buffered = reader instanceof BufferedReader b ? b : new BufferedReader(reader);
+        BufferedReader buffered = new BufferedReader(reader);
         String line;
         int lineNumber = 0;
         while ((line = buffered.readLine()) != null) {
