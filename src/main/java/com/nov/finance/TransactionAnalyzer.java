@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.TreeMap;
 
 public abstract class TransactionAnalyzer {
@@ -58,15 +56,11 @@ public abstract class TransactionAnalyzer {
         return expenses.subList(0, Math.min(10, expenses.size()));
     }
 
-    public static Optional<ExpenseExtremes> findExpenseExtremes(
-            List<Transaction> transactions, LocalDate from, LocalDate to) {
-        Objects.requireNonNull(from, "from");
-        Objects.requireNonNull(to, "to");
+    public static Transaction findLargestExpense(List<Transaction> transactions, LocalDate from, LocalDate to) {
         if (from.isAfter(to)) {
             throw new IllegalArgumentException("Period start must not be after end");
         }
         Transaction largest = null;
-        Transaction smallest = null;
         for (Transaction transaction : transactions) {
             if (transaction.getAmount() >= 0) {
                 continue;
@@ -78,14 +72,28 @@ public abstract class TransactionAnalyzer {
             if (largest == null || transaction.getAmount() < largest.getAmount()) {
                 largest = transaction;
             }
+        }
+        return largest;
+    }
+
+    public static Transaction findSmallestExpense(List<Transaction> transactions, LocalDate from, LocalDate to) {
+        if (from.isAfter(to)) {
+            throw new IllegalArgumentException("Period start must not be after end");
+        }
+        Transaction smallest = null;
+        for (Transaction transaction : transactions) {
+            if (transaction.getAmount() >= 0) {
+                continue;
+            }
+            LocalDate date = parseDate(transaction.getDate());
+            if (date.isBefore(from) || date.isAfter(to)) {
+                continue;
+            }
             if (smallest == null || transaction.getAmount() > smallest.getAmount()) {
                 smallest = transaction;
             }
         }
-        if (largest == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new ExpenseExtremes(largest, smallest));
+        return smallest;
     }
 
     public static Map<String, Double> expensesByCategory(List<Transaction> transactions) {

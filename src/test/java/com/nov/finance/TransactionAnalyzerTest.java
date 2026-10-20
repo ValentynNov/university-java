@@ -44,21 +44,23 @@ class TransactionAnalyzerTest {
     }
 
     @Test
-    void testExpenseExtremesAndSummaries() {
+    void testExpenseRangeAndSummaries() {
         List<Transaction> transactions = List.of(
                 new Transaction("01-01-2024", -1000, "Groceries", "Food"),
                 new Transaction("31-01-2024", -100, "Coffee", "Food"),
                 new Transaction("01-02-2024", -500, "Bus", "Travel"),
                 new Transaction("15-01-2024", 2000, "Salary", "Income"));
-        ExpenseExtremes extremes = TransactionAnalyzer.findExpenseExtremes(
-                transactions, LocalDate.of(2024, 1, 1), LocalDate.of(2024, 1, 31)).orElseThrow();
-        assertEquals(-1000, extremes.largest().getAmount());
-        assertEquals(-100, extremes.smallest().getAmount());
-        assertTrue(TransactionAnalyzer.findExpenseExtremes(
-                transactions, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31)).isEmpty());
+        LocalDate from = LocalDate.of(2024, 1, 1);
+        LocalDate to = LocalDate.of(2024, 1, 31);
+        assertEquals(-1000, TransactionAnalyzer.findLargestExpense(transactions, from, to).getAmount());
+        assertEquals(-100, TransactionAnalyzer.findSmallestExpense(transactions, from, to).getAmount());
+        assertNull(TransactionAnalyzer.findLargestExpense(
+                transactions, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31)));
+        assertNull(TransactionAnalyzer.findSmallestExpense(
+                transactions, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 31)));
         assertEquals(1100, TransactionAnalyzer.expensesByCategory(transactions).get("Food"), 0.001);
         assertEquals(500, TransactionAnalyzer.expensesByMonth(transactions).get(YearMonth.of(2024, 2)), 0.001);
-        assertThrows(IllegalArgumentException.class, () -> TransactionAnalyzer.findExpenseExtremes(
+        assertThrows(IllegalArgumentException.class, () -> TransactionAnalyzer.findLargestExpense(
                 transactions, LocalDate.of(2024, 2, 1), LocalDate.of(2024, 1, 1)));
     }
 }

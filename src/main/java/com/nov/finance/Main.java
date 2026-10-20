@@ -46,8 +46,9 @@ public final class Main {
         TransactionReportGenerator.printTopExpensesReport(
                 TransactionAnalyzer.findTopExpenses(transactions), System.out);
 
-        TransactionReportGenerator.printExpenseExtremesReport(
-                TransactionAnalyzer.findExpenseExtremes(transactions, from, to), System.out);
+        Transaction largest = TransactionAnalyzer.findLargestExpense(transactions, from, to);
+        Transaction smallest = TransactionAnalyzer.findSmallestExpense(transactions, from, to);
+        TransactionReportGenerator.printExpenseExtremesReport(largest, smallest, System.out);
 
         TransactionReportGenerator.printCategoryExpenses(
                 TransactionAnalyzer.expensesByCategory(transactions), 1000, System.out);

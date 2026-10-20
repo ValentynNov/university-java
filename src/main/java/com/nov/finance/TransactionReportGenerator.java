@@ -5,7 +5,6 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 public abstract class TransactionReportGenerator {
     private TransactionReportGenerator() {
@@ -33,14 +32,13 @@ public abstract class TransactionReportGenerator {
         }
     }
 
-    public static void printExpenseExtremesReport(Optional<ExpenseExtremes> extremes, PrintStream out) {
-        if (extremes.isEmpty()) {
+    public static void printExpenseExtremesReport(Transaction largest, Transaction smallest, PrintStream out) {
+        if (largest == null) {
             out.println("За вказаний період витрат немає.");
             return;
         }
-        ExpenseExtremes result = extremes.get();
-        out.printf("Найбільша витрата: %s%n", result.largest());
-        out.printf("Найменша витрата: %s%n", result.smallest());
+        out.printf("Найбільша витрата: %s%n", largest);
+        out.printf("Найменша витрата: %s%n", smallest);
     }
 
     public static void printCategoryExpenses(Map<String, Double> totals, double scale, PrintStream out) {
