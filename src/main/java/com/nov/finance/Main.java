@@ -10,10 +10,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 
-public final class Main {
-    private Main() {
-    }
-
+public class Main {
     public static void main(String[] args) throws IOException {
         String monthYear = args.length > 1 ? args[1] : "01-2024";
         LocalDate from = args.length > 2 ? TransactionAnalyzer.parseDate(args[2]) : LocalDate.MIN;
