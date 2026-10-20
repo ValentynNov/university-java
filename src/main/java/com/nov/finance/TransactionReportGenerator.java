@@ -1,76 +1,63 @@
 package com.nov.finance;
 
-import java.io.PrintStream;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public abstract class TransactionReportGenerator {
     private TransactionReportGenerator() {
     }
 
-    public static void printTransactions(List<Transaction> transactions, PrintStream out) {
-        out.println("Транзакції:");
+    public static void printTransactions(List<Transaction> transactions) {
+        System.out.println("Транзакції:");
         for (Transaction transaction : transactions) {
-            out.println(transaction);
+            System.out.println(transaction);
         }
     }
 
-    public static void printBalanceReport(double balance, PrintStream out) {
-        out.printf(Locale.ROOT, "Загальний баланс: %.2f грн%n", balance);
+    public static void printBalanceReport(double balance) {
+        System.out.println("Загальний баланс: " + balance + " грн");
     }
 
-    public static void printTransactionsCountByMonth(String monthYear, int count, PrintStream out) {
-        out.printf("Кількість транзакцій за %s: %d%n", monthYear, count);
+    public static void printTransactionsCountByMonth(String monthYear, int count) {
+        System.out.println("Кількість транзакцій за " + monthYear + ": " + count);
     }
 
-    public static void printTopExpensesReport(List<Transaction> expenses, PrintStream out) {
-        out.println("10 найбільших витрат:");
+    public static void printTopExpensesReport(List<Transaction> expenses) {
+        System.out.println("10 найбільших витрат:");
         for (Transaction expense : expenses) {
-            out.printf(Locale.ROOT, "%s: %.2f грн%n", expense.getDescription(), expense.getAmount());
+            System.out.println(expense.getDescription() + ": " + expense.getAmount() + " грн");
         }
     }
 
-    public static void printExpenseExtremesReport(Transaction largest, Transaction smallest, PrintStream out) {
+    public static void printExpenseExtremesReport(Transaction largest, Transaction smallest) {
         if (largest == null) {
-            out.println("За вказаний період витрат немає.");
+            System.out.println("За вказаний період витрат немає.");
             return;
         }
-        out.printf("Найбільша витрата: %s%n", largest);
-        out.printf("Найменша витрата: %s%n", smallest);
+        System.out.println("Найбільша витрата: " + largest);
+        System.out.println("Найменша витрата: " + smallest);
     }
 
-    public static void printCategoryExpenses(Map<String, Double> totals, double scale, PrintStream out) {
-        checkScale(scale);
-        out.printf(Locale.ROOT, "Витрати за категоріями (1 * = %.2f грн):%n", scale);
+    public static void printCategoryExpenses(Map<String, Double> totals) {
+        System.out.println("Витрати за категоріями (1 * = 1000 грн):");
         if (totals.isEmpty()) {
-            out.println("Немає витрат.");
+            System.out.println("Немає витрат.");
         }
         for (Map.Entry<String, Double> entry : totals.entrySet()) {
-            printExpenseLine(entry.getKey(), entry.getValue(), scale, out);
+            int stars = (int) Math.ceil(entry.getValue() / 1000);
+            System.out.println(entry.getKey() + ": " + "*".repeat(stars) + " " + entry.getValue() + " грн");
         }
     }
 
-    public static void printMonthlyExpenses(Map<YearMonth, Double> totals, double scale, PrintStream out) {
-        checkScale(scale);
-        out.printf(Locale.ROOT, "Витрати за місяцями (1 * = %.2f грн):%n", scale);
+    public static void printMonthlyExpenses(Map<YearMonth, Double> totals) {
+        System.out.println("Витрати за місяцями (1 * = 1000 грн):");
         if (totals.isEmpty()) {
-            out.println("Немає витрат.");
+            System.out.println("Немає витрат.");
         }
         for (Map.Entry<YearMonth, Double> entry : totals.entrySet()) {
-            printExpenseLine(entry.getKey().toString(), entry.getValue(), scale, out);
+            int stars = (int) Math.ceil(entry.getValue() / 1000);
+            System.out.println(entry.getKey() + ": " + "*".repeat(stars) + " " + entry.getValue() + " грн");
         }
-    }
-
-    private static void checkScale(double scale) {
-        if (!Double.isFinite(scale) || scale <= 0) {
-            throw new IllegalArgumentException("Scale must be positive and finite");
-        }
-    }
-
-    private static void printExpenseLine(String name, double total, double scale, PrintStream out) {
-        int stars = (int) Math.ceil(total / scale);
-        out.printf(Locale.ROOT, "%s: %s %.2f грн%n", name, "*".repeat(stars), total);
     }
 }

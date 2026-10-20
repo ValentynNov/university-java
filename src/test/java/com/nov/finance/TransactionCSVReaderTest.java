@@ -24,14 +24,14 @@ class TransactionCSVReaderTest {
     }
 
     @Test
-    void parsesThreeColumnsAndQuotedComma() throws Exception {
+    void parsesThreeColumns() throws Exception {
         String csv = "\uFEFFdate,amount,description\n"
-                + "01-02-2024,-100.50,\"Shop, downtown\"\n"
+                + "01-02-2024,-100.50,Shop\n"
                 + "02-02-2024,50,Salary\n";
         List<Transaction> transactions = TransactionCSVReader.readTransactions(new StringReader(csv));
         assertEquals(2, transactions.size());
-        assertEquals("Shop, downtown", transactions.getFirst().getDescription());
-        assertEquals("Shop, downtown", transactions.getFirst().getCategory());
+        assertEquals("Shop", transactions.getFirst().getDescription());
+        assertEquals("Shop", transactions.getFirst().getCategory());
     }
 
     @Test

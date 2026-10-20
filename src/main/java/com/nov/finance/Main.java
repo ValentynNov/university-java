@@ -35,26 +35,26 @@ public final class Main {
             transactions = TransactionCSVReader.readTransactions(reader);
         }
 
-        TransactionReportGenerator.printTransactions(transactions, System.out);
+        TransactionReportGenerator.printTransactions(transactions);
 
         TransactionReportGenerator.printBalanceReport(
-                TransactionAnalyzer.calculateTotalBalance(transactions), System.out);
+                TransactionAnalyzer.calculateTotalBalance(transactions));
 
         TransactionReportGenerator.printTransactionsCountByMonth(monthYear,
-                TransactionAnalyzer.countTransactionsByMonth(transactions, monthYear), System.out);
+                TransactionAnalyzer.countTransactionsByMonth(transactions, monthYear));
 
         TransactionReportGenerator.printTopExpensesReport(
-                TransactionAnalyzer.findTopExpenses(transactions), System.out);
+                TransactionAnalyzer.findTopExpenses(transactions));
 
         Transaction largest = TransactionAnalyzer.findLargestExpense(transactions, from, to);
         Transaction smallest = TransactionAnalyzer.findSmallestExpense(transactions, from, to);
-        TransactionReportGenerator.printExpenseExtremesReport(largest, smallest, System.out);
+        TransactionReportGenerator.printExpenseExtremesReport(largest, smallest);
 
         TransactionReportGenerator.printCategoryExpenses(
-                TransactionAnalyzer.expensesByCategory(transactions), 1000, System.out);
+                TransactionAnalyzer.expensesByCategory(transactions));
 
         TransactionReportGenerator.printMonthlyExpenses(
-                TransactionAnalyzer.expensesByMonth(transactions), 1000, System.out);
+                TransactionAnalyzer.expensesByMonth(transactions));
     }
 
 }
