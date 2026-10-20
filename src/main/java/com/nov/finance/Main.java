@@ -12,9 +12,9 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String monthYear = args.length > 1 ? args[1] : "01-2024";
-        LocalDate from = args.length > 2 ? TransactionAnalyzer.parseDate(args[2]) : LocalDate.MIN;
-        LocalDate to = args.length > 3 ? TransactionAnalyzer.parseDate(args[3]) : LocalDate.MAX;
+        String monthYear = "01-2024";
+        LocalDate from = LocalDate.MIN;
+        LocalDate to = LocalDate.MAX;
 
         Reader reader;
         if (args.length > 0) {
