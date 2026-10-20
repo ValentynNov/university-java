@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public abstract class TransactionAnalyzer {
     private static final DateTimeFormatter CSV_DATE = DateTimeFormatter.ofPattern("dd-MM-uuuu");
@@ -28,22 +28,34 @@ public abstract class TransactionAnalyzer {
     }
 
     public static double calculateTotalBalance(List<Transaction> transactions) {
-        return transactions.stream().mapToDouble(Transaction::getAmount).sum();
+        double balance = 0;
+        for (Transaction transaction : transactions) {
+            balance += transaction.getAmount();
+        }
+        return balance;
     }
 
     public static int countTransactionsByMonth(List<Transaction> transactions, String monthYear) {
         YearMonth wanted = YearMonth.parse(monthYear, MONTH);
-        return (int) transactions.stream()
-                .filter(t -> YearMonth.from(parseDate(t.getDate())).equals(wanted))
-                .count();
+        int count = 0;
+        for (Transaction transaction : transactions) {
+            YearMonth current = YearMonth.from(parseDate(transaction.getDate()));
+            if (current.equals(wanted)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public static List<Transaction> findTopExpenses(List<Transaction> transactions) {
-        return transactions.stream()
-                .filter(t -> t.getAmount() < 0)
-                .sorted(Comparator.comparingDouble(Transaction::getAmount))
-                .limit(10)
-                .toList();
+        List<Transaction> expenses = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            if (transaction.getAmount() < 0) {
+                expenses.add(transaction);
+            }
+        }
+        expenses.sort(Comparator.comparingDouble(Transaction::getAmount));
+        return expenses.subList(0, Math.min(10, expenses.size()));
     }
 
     public static Optional<ExpenseExtremes> findExpenseExtremes(
@@ -53,35 +65,50 @@ public abstract class TransactionAnalyzer {
         if (from.isAfter(to)) {
             throw new IllegalArgumentException("Period start must not be after end");
         }
-        List<Transaction> expenses = transactions.stream()
-                .filter(t -> t.getAmount() < 0)
-                .filter(t -> {
-                    LocalDate date = parseDate(t.getDate());
-                    return !date.isBefore(from) && !date.isAfter(to);
-                })
-                .toList();
-        if (expenses.isEmpty()) {
+        Transaction largest = null;
+        Transaction smallest = null;
+        for (Transaction transaction : transactions) {
+            if (transaction.getAmount() >= 0) {
+                continue;
+            }
+            LocalDate date = parseDate(transaction.getDate());
+            if (date.isBefore(from) || date.isAfter(to)) {
+                continue;
+            }
+            if (largest == null || transaction.getAmount() < largest.getAmount()) {
+                largest = transaction;
+            }
+            if (smallest == null || transaction.getAmount() > smallest.getAmount()) {
+                smallest = transaction;
+            }
+        }
+        if (largest == null) {
             return Optional.empty();
         }
-        Comparator<Transaction> byAmount = Comparator.comparingDouble(Transaction::getAmount);
-        return Optional.of(new ExpenseExtremes(
-                expenses.stream().min(byAmount).orElseThrow(),
-                expenses.stream().max(byAmount).orElseThrow()));
+        return Optional.of(new ExpenseExtremes(largest, smallest));
     }
 
     public static Map<String, Double> expensesByCategory(List<Transaction> transactions) {
-        return transactions.stream()
-                .filter(t -> t.getAmount() < 0)
-                .collect(Collectors.groupingBy(
-                        Transaction::getCategory, TreeMap::new,
-                        Collectors.summingDouble(t -> -t.getAmount())));
+        Map<String, Double> totals = new TreeMap<>();
+        for (Transaction transaction : transactions) {
+            if (transaction.getAmount() < 0) {
+                String category = transaction.getCategory();
+                double total = totals.getOrDefault(category, 0.0);
+                totals.put(category, total - transaction.getAmount());
+            }
+        }
+        return totals;
     }
 
     public static Map<YearMonth, Double> expensesByMonth(List<Transaction> transactions) {
-        return transactions.stream()
-                .filter(t -> t.getAmount() < 0)
-                .collect(Collectors.groupingBy(
-                        t -> YearMonth.from(parseDate(t.getDate())), TreeMap::new,
-                        Collectors.summingDouble(t -> -t.getAmount())));
+        Map<YearMonth, Double> totals = new TreeMap<>();
+        for (Transaction transaction : transactions) {
+            if (transaction.getAmount() < 0) {
+                YearMonth month = YearMonth.from(parseDate(transaction.getDate()));
+                double total = totals.getOrDefault(month, 0.0);
+                totals.put(month, total - transaction.getAmount());
+            }
+        }
+        return totals;
     }
 }

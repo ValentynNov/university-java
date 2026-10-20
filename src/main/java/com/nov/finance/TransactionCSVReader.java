@@ -11,14 +11,7 @@ public abstract class TransactionCSVReader {
     private TransactionCSVReader() {
     }
 
-    public static List<Transaction> readTransactions(TransactionDataSource source) throws IOException {
-        Objects.requireNonNull(source, "source");
-        try (Reader reader = source.open()) {
-            return parse(reader);
-        }
-    }
-
-    public static List<Transaction> parse(Reader reader) throws IOException {
+    public static List<Transaction> readTransactions(Reader reader) throws IOException {
         Objects.requireNonNull(reader, "reader");
         List<Transaction> transactions = new ArrayList<>();
         BufferedReader buffered = reader instanceof BufferedReader b ? b : new BufferedReader(reader);
